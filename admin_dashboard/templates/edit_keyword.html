@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}编辑关键词 - 澳大利亚新闻简报系统{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>编辑关键词</h2>
+    
+    <form action="/keywords/{{ keyword.id }}/update" method="post">
+        <label for="word">关键词</label>
+        <input type="text" id="word" name="word" value="{{ keyword.word }}" required>
+        
+        <label for="category">分类</label>
+        <select id="category" name="category">
+            {% if categories %}
+                {% for category in categories %}
+                <option value="{{ category }}" {% if category == keyword.category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            {% endif %}
+            <option value="general" {% if keyword.category == 'general' %}selected{% endif %}>通用</option>
+            <option value="student" {% if keyword.category == 'student' %}selected{% endif %}>学生相关</option>
+            <option value="safety" {% if keyword.category == 'safety' %}selected{% endif %}>安全相关</option>
+            <option value="housing" {% if keyword.category == 'housing' %}selected{% endif %}>住房相关</option>
+            <option value="chinese" {% if keyword.category == 'chinese' %}selected{% endif %}>华人相关</option>
+        </select>
+        
+        <label for="weight">权重</label>
+        <input type="number" id="weight" name="weight" step="0.1" min="0.1" max="10" value="{{ keyword.weight }}" required>
+        
+        <div>
+            <button type="submit">保存</button>
+            <a href="/keywords" class="button" style="background-color: #7f8c8d;">取消</a>
+        </div>
+    </form>
+</div>
+{% endblock %} 

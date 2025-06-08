@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}RSS源管理 - 澳大利亚新闻简报系统{% endblock %}
+
+{% block content %}
+<style>
+    .health-status {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+    .health-healthy {
+        background-color: #27ae60;
+    }
+    .health-warning {
+        background-color: #f39c12;
+    }
+    .health-unhealthy {
+        background-color: #e74c3c;
+    }
+    .source-row-unhealthy {
+        background-color: rgba(231, 76, 60, 0.1);
+    }
+    .source-warning {
+        color: #e67e22;
+        font-weight: bold;
+    }
+    .source-error {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+</style>
+
+<div class="card">
+    <h2>RSS源列表</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>URL</th>
+                <th>最后抓取</th>
+                <th>状态</th>
+                <th>健康状况</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for source in sources %}
+            <tr class="{% if source.health_status == 'unhealthy' %}source-row-unhealthy{% endif %}">
+                <td>{{ source.id }}</td>
+                <td>{{ source.name }}</td>
+                <td>{{ source.url }}</td>
+                <td>{{ source.last_fetched or "从未" }}</td>
+                <td>{{ "活跃" if source.is_active else "停用" }}</td>
+                <td>
+                    <span class="health-status health-{{ source.health_status }}"></span>
+                    {% if source.health_status == 'unhealthy' %}
+                        <span class="source-error">异常</span>
+                        {% if source.last_fetched is none %}
+                            (从未成功获取)
+                        {% else %}
+                            (失败次数过多)
+                        {% endif %}
+                    {% elif source.health_status == 'warning' %}
+                        <span class="source-warning">警告</span> ({{ source.error_count }}次失败)
+                    {% else %}
+                        正常
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/sources/{{ source.id }}/edit" class="button">编辑</a>
+                    <a href="/sources/{{ source.id }}/toggle" class="button {% if source.is_active %}button-danger{% endif %}">
+                        {% if source.is_active %}停用{% else %}激活{% endif %}
+                    </a>
+                    <a href="#" onclick="if(confirm('确定要删除RSS源 {{ source.name }} 吗？')) location.href='/sources/{{ source.id }}/delete';" class="button button-danger">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>添加新RSS源</h2>
+    
+    <form action="/sources/add" method="post">
+        <label for="name">名称</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="url">URL</label>
+        <input type="url" id="url" name="url" required>
+        
+        <button type="submit">添加</button>
+    </form>
+</div>
+{% endblock %}

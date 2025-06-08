@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 澳大利亚新闻简报系统{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>系统仪表盘</h2>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>今日新闻数量</h3>
+            <div class="value">{{ stats.today_articles }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>活跃RSS源</h3>
+            <div class="value">{{ stats.active_sources }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>待处理文章</h3>
+            <div class="value">{{ stats.pending_articles }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>已处理文章</h3>
+            <div class="value">{{ stats.processed_articles }}</div>
+        </div>
+    </div>
+    
+    <h2>最新文章</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>标题</th>
+                <th>来源</th>
+                <th>发布时间</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr>
+                <td>{{ article.title }}</td>
+                <td>{{ article.source }}</td>
+                <td>{{ article.published_at }}</td>
+                <td class="status-{{ article.status }}">{{ article.status }}</td>
+                <td>
+                    <a href="/news/{{ article.id }}" class="button">查看</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <a href="/news" class="button">查看所有文章</a>
+</div>
+
+<div class="card">
+    <h2>快速操作</h2>
+    
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/tasks/trigger-collection" class="button">触发数据采集</a>
+        <a href="/tasks/process-articles" class="button">处理待分析文章</a>
+    </div>
+</div>
+{% endblock %}

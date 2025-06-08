@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}系统日志 - 澳大利亚新闻简报系统{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>系统日志</h2>
+    
+    <div style="margin-bottom: 1rem;">
+        <a href="/logs/clear" class="button button-danger">清除日志</a>
+        <a href="/logs?refresh=1" class="button">刷新</a>
+    </div>
+    
+    <div class="log-container">
+        {% for log in logs %}
+        <div class="log-entry">{{ log }}</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

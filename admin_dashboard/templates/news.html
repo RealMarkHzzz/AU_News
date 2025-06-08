@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}新闻列表 - 澳大利亚新闻简报系统{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>新闻列表</h2>
+    
+    <form action="/news" method="get">
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <input type="text" name="search" placeholder="搜索标题..." value="{{ search }}">
+            </div>
+            <div>
+                <select name="status">
+                    <option value="" {% if status == "" %}selected{% endif %}>所有状态</option>
+                    <option value="pending" {% if status == "pending" %}selected{% endif %}>待处理</option>
+                    <option value="processed" {% if status == "processed" %}selected{% endif %}>已处理</option>
+                </select>
+            </div>
+            <div>
+                <select name="sort_by">
+                    <option value="date" {% if sort_by == "date" %}selected{% endif %}>按日期排序</option>
+                    <option value="relevance" {% if sort_by == "relevance" %}selected{% endif %}>按相关性排序</option>
+                </select>
+            </div>
+            <div>
+                <select name="per_page">
+                    <option value="20" {% if per_page == 20 %}selected{% endif %}>每页20篇</option>
+                    <option value="50" {% if per_page == 50 %}selected{% endif %}>每页50篇</option>
+                    <option value="100" {% if per_page == 100 %}selected{% endif %}>每页100篇</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit">筛选</button>
+            </div>
+        </div>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>标题</th>
+                <th>来源</th>
+                <th>发布时间</th>
+                <th>相关性得分</th>
+                <th>情感倾向</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.source }}</td>
+                <td>{{ article.published_at }}</td>
+                <td>{{ "%.2f"|format(article.relevance_score) if article.relevance_score else "-" }}</td>
+                <td>{{ "%.2f"|format(article.sentiment) if article.sentiment else "-" }}</td>
+                <td class="status-{{ article.status }}">{{ article.status }}</td>
+                <td>
+                    <a href="/news/{{ article.id }}" class="button">查看</a>
+                    {% if article.status == "processed" %}
+                    <a href="/news/{{ article.id }}/reevaluate" class="button">重评估</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+        {% if page > 1 %}
+        <a href="/news?page={{ page - 1 }}&search={{ search }}&status={{ status }}&sort_by={{ sort_by }}&per_page={{ per_page }}" class="button" style="margin-right: 0.5rem;">上一页</a>
+        {% endif %}
+        
+        <span style="line-height: 38px;">第 {{ page }} 页，共 {{ total_pages }} 页 (每页{{ per_page }}篇)</span>
+        
+        {% if page < total_pages %}
+        <a href="/news?page={{ page + 1 }}&search={{ search }}&status={{ status }}&sort_by={{ sort_by }}&per_page={{ per_page }}" class="button" style="margin-left: 0.5rem;">下一页</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

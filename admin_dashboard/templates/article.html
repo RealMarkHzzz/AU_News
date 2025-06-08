@@ -1,0 +1,51 @@
+
+    {% extends "base.html" %}
+    
+    {% block title %}{{ article.title }} - 澳大利亚新闻简报系统{% endblock %}
+    
+    {% block content %}
+    <div class="card">
+        <h2>{{ article.title }}</h2>
+        
+        <div style="margin-bottom: 1rem; color: #666;">
+            <strong>来源：</strong> {{ article.source }} | 
+            <strong>发布时间：</strong> {{ article.published_at }} | 
+            <strong>状态：</strong> <span class="status-{{ article.status }}">{{ article.status }}</span>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <strong>原文链接：</strong> <a href="{{ article.url }}" target="_blank">{{ article.url }}</a>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <div style="display: flex; gap: 1rem;">
+                <div style="flex: 1;">
+                    <strong>相关性得分：</strong> {{ "%.2f"|format(article.relevance_score) if article.relevance_score else "未分析" }}
+                </div>
+                <div style="flex: 1;">
+                    <strong>情感倾向：</strong> {{ "%.2f"|format(article.sentiment) if article.sentiment else "未分析" }}
+                </div>
+            </div>
+        </div>
+        
+        <h3>内容</h3>
+        <div class="article-content">
+            {{ article.content }}
+        </div>
+        
+        {% if article.summary %}
+        <h3>摘要</h3>
+        <div class="article-summary">
+            {{ article.summary }}
+        </div>
+        {% endif %}
+        
+        <div style="margin-top: 1rem;">
+            <a href="/news" class="button">返回列表</a>
+            {% if article.status == "pending" %}
+            <a href="/tasks/process-articles" class="button">分析文章</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}
+    

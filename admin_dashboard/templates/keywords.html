@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}关键词管理 - 澳大利亚新闻简报系统{% endblock %}
+
+{% block content %}
+<style>
+    .category-management {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-left: 4px solid #27ae60;
+    }
+    
+    .category-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        margin: 0.3rem;
+        background-color: #3498db;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+    
+    .category-badge .delete-btn {
+        margin-left: 5px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<div class="card category-management">
+    <h2>分类管理</h2>
+    
+    {% if categories %}
+    <div>
+        <h3>当前分类</h3>
+        <div style="margin: 1rem 0;">
+            {% for category in categories %}
+            <div class="category-badge">
+                {{ category }}
+                <a href="#" onclick="if(confirm('确定要删除分类「{{ category }}」及其下所有关键词吗？此操作不可恢复！')) location.href='/keywords/category/{{ category }}/delete';" class="delete-btn" title="删除此分类及其所有关键词">×</a>
+            </div>
+            {% endfor %}
+        </div>
+        <p><small>点击分类右侧的 "×" 可以删除该分类及其所有关键词</small></p>
+    </div>
+    {% else %}
+    <p>当前没有任何分类</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>关键词列表</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>关键词</th>
+                <th>分类</th>
+                <th>权重</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for keyword in keywords %}
+            <tr>
+                <td>{{ keyword.id }}</td>
+                <td>{{ keyword.word }}</td>
+                <td>{{ keyword.category }}</td>
+                <td>{{ keyword.weight }}</td>
+                <td>{{ "活跃" if keyword.is_active else "停用" }}</td>
+                <td>
+                    <a href="/keywords/{{ keyword.id }}/edit" class="button">编辑</a>
+                    <a href="/keywords/{{ keyword.id }}/toggle" class="button {% if keyword.is_active %}button-danger{% endif %}">
+                        {% if keyword.is_active %}停用{% else %}激活{% endif %}
+                    </a>
+                    <a href="#" onclick="if(confirm('确定要删除关键词 {{ keyword.word }} 吗？')) location.href='/keywords/{{ keyword.id }}/delete';" class="button button-danger">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>添加新关键词</h2>
+    
+    <form action="/keywords/add" method="post">
+        <label for="word">关键词</label>
+        <input type="text" id="word" name="word" required>
+        
+        <label for="category">分类</label>
+        <select id="category" name="category">
+            {% if categories %}
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            {% endif %}
+            <option value="general">通用</option>
+            <option value="student">学生相关</option>
+            <option value="safety">安全相关</option>
+            <option value="housing">住房相关</option>
+            <option value="chinese">华人相关</option>
+        </select>
+        
+        <label for="weight">权重</label>
+        <input type="number" id="weight" name="weight" step="0.1" min="0.1" max="10" value="1.0" required>
+        
+        <button type="submit">添加</button>
+    </form>
+</div>
+{% endblock %} 
