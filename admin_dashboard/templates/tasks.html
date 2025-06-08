@@ -1,24 +1,24 @@
-{% extends "base.html" %}
 
-{% block title %}任务控制 - 澳大利亚新闻简报系统{% endblock %}
-
-{% block content %}
-<div class="card">
-    <h2>任务控制</h2>
+    {% extends "base.html" %}
     
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <a href="/tasks/trigger-collection" class="button">触发数据采集</a>
-        <a href="/tasks/process-articles" class="button">处理待分析文章</a>
-        <a href="/tasks/start-background-processor" class="button">启动后台处理器</a>
-        <a href="/tasks/reevaluate-articles" class="button">重新评估文章</a>
+    {% block title %}任务控制 - 澳大利亚新闻简报系统{% endblock %}
+    
+    {% block content %}
+    <div class="card">
+        <h2>任务控制</h2>
+        
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="/tasks/trigger-collection" class="button">触发数据采集</a>
+            <a href="/tasks/process-articles" class="button">处理待分析文章</a>
+            <a href="/tasks/start-background-processor" class="button">启动后台处理器</a>
+        </div>
+        
+        <h3>任务说明</h3>
+        <ul>
+            <li><strong>触发数据采集</strong> - 从所有活跃的RSS源获取新文章</li>
+            <li><strong>处理待分析文章</strong> - 对待处理状态的文章进行内容分析</li>
+            <li><strong>启动后台处理器</strong> - 启动自动定期处理文章的后台任务</li>
+        </ul>
     </div>
+    {% endblock %}
     
-    <h3>任务说明</h3>
-    <ul>
-        <li><strong>触发数据采集</strong> - 从所有活跃的RSS源获取新文章</li>
-        <li><strong>处理待分析文章</strong> - 对待处理状态的文章进行内容分析</li>
-        <li><strong>启动后台处理器</strong> - 启动自动定期处理文章的后台任务</li>
-        <li><strong>重新评估文章</strong> - 根据当前关键词重新评估已处理文章的相关性得分和情感倾向</li>
-    </ul>
-</div>
-{% endblock %}
